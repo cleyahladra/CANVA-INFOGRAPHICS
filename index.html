@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Column-Family Database Explorer</title>
+<script src="/_sdk/element_sdk.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="floating-particles">
+<div class="particle" style="top: 10%; left: 80%; animation-duration: 8s; animation-delay: 0s;"></div>
+<div class="particle" style="top: 50%; left: 20%; animation-duration: 10s; animation-delay: 2s;"></div>
+<div class="particle" style="top: 70%; left: 60%; animation-duration: 6s; animation-delay: 4s;"></div>
+<div class="particle" style="top: 30%; left: 40%; animation-duration: 12s; animation-delay: 6s;"></div>
+</div>
+<div class="container">
+<header class="header">
+<h1 class="main-title">Column-Family Database Explorer</h1>
+<p class="subtitle">A Deep Dive into Wide-Column Stores and their Architecture</p>
+</header>
+<nav class="navigation">
+<button class="nav-btn active" data-target="section-intro" id="nav_intro">Introduction</button>
+<button class="nav-btn" data-target="section-architecture" id="nav_architecture">Architecture</button>
+<button class="nav-btn" data-target="section-scalability" id="nav_scalability">Scalability</button>
+<button class="nav-btn" data-target="section-usecase" id="nav_usecase">Use Cases</button>
+<button class="nav-btn" data-target="section-examples" id="nav_examples">Examples (DBMS)</button>
+</nav>
+<div class="content">
+<section id="section-intro" class="content-section active">
+<h2 class="section-title">Introduction to Column-Family Databases</h2>
+<p class="card-content">Column-Family databases, also known as Wide-Column Stores, are a type of <span class="highlight">NoSQL database</span> designed to handle massive amounts of data by storing data in column families, which are groups of related columns. Unlike traditional relational databases (RDBMS), they don't use a fixed schema and are optimized for fast reads and writes across distributed systems. They are a middle ground between Key-Value stores and Document databases, offering a two-dimensional, sparse, and semi-structured data model.</p>
+<div class="content-grid">
+<div class="info-card">
+<h4 class="card-title">Sparse and Flexible Schema</h4>
+<p class="card-content">Each row can have a different set of columns within the same column family. Columns are created only when a value is present, making the data model <span class="highlight">sparse</span> and highly flexible, which is ideal for evolving applications.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Distributed Architecture</h4>
+<p class="card-content">Data is partitioned across many nodes, allowing for <span class="highlight">linear horizontal scaling</span>. This architecture is built to withstand hardware failures, providing high availability and fault tolerance.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">High Write Throughput</h4>
+<p class="card-content">They are optimized for writing data quickly by appending changes. This makes them excellent for workloads involving massive data ingestion, such as <span class="highlight">time-series data</span> or logging.</p>
+</div>
+</div>
+</section>
+<section id="section-architecture" class="content-section">
+<h2 class="section-title">Core Architecture: Keyspace, Column Families, Rows, and Columns</h2>
+<div class="visual-diagram">
+<h3>Conceptual Diagram of Column-Family Structure</h3>
+<div class="column-family-visual">
+<div class="column-family">
+<div class="family-title">User_Profile Family</div>
+<div class="column">Row Key: user101</div>
+<div class="column">username: alice</div>
+<div class="column">email: alice@example.com</div>
+<div class="column">city: New York</div>
+<div class="column">phone: (555) 123-4567</div>
+</div>
+<div class="column-family">
+<div class="family-title">User_Activity Family</div>
+<div class="column">Row Key: user101</div>
+<div class="column">last_login: 2024-05-10</div>
+<div class="column">posts_count: 42</div>
+<div class="column">last_post_id: p987</div>
+<div class="column">premium_status: true</div>
+</div>
+<div class="column-family">
+<div class="family-title">Followers Family (Sparse)</div>
+<div class="column">Row Key: user101</div>
+<div class="column">follower_u203: 2024-04-01</div>
+<div class="column">follower_u450: 2024-04-15</div>
+</div>
+</div>
+</div>
+<div class="content-grid">
+<div class="info-card">
+<h4 class="card-title">Keyspace (Database)</h4>
+<p class="card-content">The highest level of abstraction, similar to a database schema in RDBMS. It's a container for column families.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Column Family (Table)</h4>
+<p class="card-content">A collection of columns that are frequently accessed together. They are analogous to tables in RDBMS, but are not rigid and can contain an infinite number of columns.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Row (Key)</h4>
+<p class="card-content">Identified by a <span class="highlight">Row Key</span> (or Partition Key). All columns for a single row key are usually stored together on the same node, making row-based lookups very fast.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Column (Key-Value Pair)</h4>
+<p class="card-content">The most granular unit, consisting of a column name (key), its value, and a timestamp. The timestamp is used for versioning and conflict resolution.</p>
+</div>
+</div>
+</section>
+<section id="section-scalability" class="content-section">
+<h2 class="section-title">Scalability, Performance, and Consistency</h2>
+<div class="interactive-stats">
+<div class="stat-card">
+<div class="stat-number">>100x</div>
+<div class="stat-label">Faster Write Speeds</div>
+</div>
+<div class="stat-card">
+<div class="stat-number">PB+</div>
+<div class="stat-label">Maximum Data Size</div>
+</div>
+<div class="stat-card">
+<div class="stat-number">5-9s</div>
+<div class="stat-label">Typical Latency (ms)</div>
+</div>
+<div class="stat-card">
+<div class="stat-number">100%</div>
+<div class="stat-label">Horizontal Scalability</div>
+</div>
+</div>
+<div class="content-grid">
+<div class="info-card">
+<h4 class="card-title">Horizontal Scaling (Sharding)</h4>
+<p class="card-content">Column-Family databases achieve massive scalability by <span class="highlight">sharding</span> data across many commodity servers. As the data grows, you simply add more nodes to the cluster, ensuring linear performance gains.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Performance Optimization</h4>
+<p class="card-content">They optimize for disk I/O by storing all columns in a family together. This is a great advantage over RDBMS for queries that only need a few columns from a very wide table.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Eventual Consistency (Tunable)</h4>
+<p class="card-content">Many Column-Family databases utilize <span class="highlight">Eventual Consistency</span> to maintain high availability and performance. However, they often offer tunable consistency levels, allowing developers to choose a balance between consistency and latency.</p>
+</div>
+</div>
+<div class="pros-cons">
+<div class="pros">
+<h3>Pros: Key Advantages</h3>
+<ul>
+<li class="list-item">Excellent for massive scale and high write throughput workloads.</li>
+<li class="list-item">Linear and easy horizontal scalability by adding more nodes.</li>
+<li class="list-item">Flexible, sparse schema to handle rapidly evolving data models.</li>
+<li class="list-item">High availability and fault tolerance due to distributed nature.</li>
+<li class="list-item">Fast access when querying by the Row Key.</li>
+</ul>
+</div>
+<div class="cons">
+<h3>Cons: Potential Drawbacks</h3>
+<ul>
+<li class="list-item">Complex data modeling compared to relational or document databases.</li>
+<li class="list-item">Poor performance for complex queries or joins across multiple column families.</li>
+<li class="list-item">No native support for ACID transactions (like RDBMS).</li>
+<li class="list-item">Eventual consistency model can be challenging for certain applications.</li>
+<li class="list-item">Secondary index support is often less mature or requires careful design.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="section-usecase" class="content-section">
+<h2 class="section-title">Typical Use Cases for Wide-Column Stores</h2>
+<p class="card-content">The unique architecture of Column-Family databases makes them perfectly suited for specific workloads that require extreme scale, high performance, and flexible schema. They shine where a relational model would buckle under pressure.</p>
+<div class="content-grid">
+<div class="info-card">
+<h4 class="card-title">Time-Series Data</h4>
+<p class="card-content">Used for storing massive amounts of time-stamped data, like monitoring logs, sensor data, or financial market data, due to their superior write performance.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Analytics and Business Intelligence</h4>
+<p class="card-content">Ideal for analytical workloads involving column-oriented scans on very wide datasets, as they can quickly aggregate data across specific columns.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">E-commerce and User Profiles</h4>
+<p class="card-content">Suitable for storing user profile data, session information, and shopping cart details where the schema is flexible and reads/writes must be highly performant.</p>
+</div>
+<div class="info-card">
+<h4 class="card-title">Event Logging and Messaging</h4>
+<p class="card-content">Excellent for high-volume, low-latency log collection and distributed messaging systems, leveraging their high write throughput.</p>
+</div>
+</div>
+</section>
+<section id="section-examples" class="content-section">
+<h2 class="section-title">Popular Column-Family Database Management Systems</h2>
+<div class="dbms-grid">
+<div class="dbms-card">
+<div class="dbms-name">Apache Cassandra</div>
+<p class="dbms-description">A highly scalable, open-source NoSQL database that offers continuous availability and linear scalability. It was originally developed at Facebook.</p>
+</div>
+<div class="dbms-card">
+<div class="dbms-name">HBase</div>
+<p class="dbms-description">The Hadoop database, designed to provide a fault-tolerant way of storing large amounts of sparse data. It runs on top of the Hadoop Distributed File System (HDFS).</p>
+</div>
+<div class="dbms-card">
+<div class="dbms-name">Google Bigtable</div>
+<p class="dbms-description">Google's proprietary, distributed storage system for managing massive amounts of structured data. It serves as the foundation for Google services like Search and Gmail.</p>
+</div>
+<div class="dbms-card">
+<div class="dbms-name">ScyllaDB</div>
+<p class="dbms-description">A high-performance, open-source NoSQL database that is API-compatible with Apache Cassandra but rewritten in C++ for exceptional low-latency performance.</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
